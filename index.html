@@ -4,24 +4,90 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FlowDrop — Free Automation Workflow Ideas</title>
+<script>
+  // Inline theme initialization to prevent flash of wrong theme
+  (function() {
+    const savedTheme = localStorage.getItem('flowdrop-theme');
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0C0E14;
-  --surface: #13161F;
-  --surface2: #1A1E2A;
-  --border: #252A38;
-  --border2: #2E3447;
-  --text: #E8EAF0;
-  --muted: #6B7280;
-  --muted2: #9CA3AF;
-  --accent: #00E5FF;
-  --accent2: #7C3AED;
+  /* Default: Dark Mode Foundations (Stealth & Low Strain) */
+  --bg: #0B0F19; /* slate-950 */
+  --bg-rgb: 11, 15, 25;
+  --surface: #0F172A; /* slate-900: elevated surfaces, workflow card containers, sticky nav bar */
+  --surface-rgb: 15, 23, 42;
+  --surface2: #1E293B; /* slate-800: active tag states, interactive code blocks, button hover backdrops */
+  --surface2-rgb: 30, 41, 59;
+  --border: #1E293B; /* slate-800 */
+  --border2: #334155; /* slate-700 */
+  --text: #F1F5F9; /* slate-100: main text headlines, crisp body copy */
+  --text-rgb: 241, 245, 249;
+  --muted: #64748B; /* slate-500: secondary text, contributor names, subtitle captions */
+  --muted2: #94A3B8; /* slate-400 */
+  --accent: #F59E0B; /* amber-500: primary dark mode CTA, active filter highlight */
+  --accent-rgb: 245, 158, 11;
+  --accent2: #D97706; /* amber-600: primary light mode CTA, text links */
+  --accent2-rgb: 217, 119, 6;
   --accent3: #10B981;
   --accent4: #F59E0B;
   --accent5: #EF4444;
   --accent6: #EC4899;
 }
+
+[data-theme="light"] {
+  /* Light Mode Foundations (Clean & Legible) */
+  --bg: #FFFFFF;
+  --bg-rgb: 255, 255, 255;
+  --surface: #F8FAFC; /* slate-50: secondary backgrounds, inactive tag capsules, card backgrounds */
+  --surface-rgb: 248, 250, 252;
+  --surface2: #F1F5F9; /* slate-100: input fields, borders, container dividing lines */
+  --surface2-rgb: 241, 245, 249;
+  --border: #F1F5F9; /* slate-100 */
+  --border2: #E2E8F0; /* slate-200 */
+  --text: #0F172A; /* slate-900: main text, primary headlines */
+  --text-rgb: 15, 23, 42;
+  --muted: #64748B; /* slate-500: secondary text, contributor names, subtitle captions */
+  --muted2: #475569; /* slate-600 */
+  --accent: #D97706; /* amber-600 */
+  --accent-rgb: 217, 119, 6;
+  --accent2: #F59E0B; /* amber-500 */
+  --accent2-rgb: 245, 158, 11;
+}
+
+/* THEME TOGGLE BUTTON */
+.theme-toggle-btn {
+  background: var(--surface2);
+  color: var(--muted2);
+  border: 1px solid var(--border2);
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.theme-toggle-btn:hover {
+  background: var(--border);
+  color: var(--text);
+  border-color: var(--border2);
+}
+.theme-toggle-btn svg {
+  transition: transform 0.2s ease;
+}
+.theme-toggle-btn:hover svg {
+  transform: rotate(15deg) scale(1.05);
+}
+.theme-toggle-btn .sun-icon { display: block; }
+.theme-toggle-btn .moon-icon { display: none; }
+
+[data-theme="light"] .theme-toggle-btn .sun-icon { display: none; }
+[data-theme="light"] .theme-toggle-btn .moon-icon { display: block; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -53,8 +119,8 @@ body::after {
   position: fixed; inset: 0; z-index: 0;
   pointer-events: none;
   background-image:
-    linear-gradient(rgba(0,229,255,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,229,255,.025) 1px, transparent 1px);
+    linear-gradient(rgba(var(--accent-rgb),.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb),.015) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
@@ -64,7 +130,7 @@ nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 48px;
   height: 64px;
-  background: rgba(12,14,20,.85);
+  background: rgba(var(--bg-rgb),.85);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(20px);
 }
@@ -115,8 +181,8 @@ nav {
 .badge-free {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px; font-weight: 500;
-  background: rgba(0,229,255,.1); color: var(--accent);
-  border: 1px solid rgba(0,229,255,.2);
+  background: rgba(var(--accent-rgb),.1); color: var(--accent);
+  border: 1px solid rgba(var(--accent-rgb),.2);
   padding: 4px 10px; border-radius: 100px;
   letter-spacing: .5px;
 }
@@ -127,7 +193,7 @@ nav {
   cursor: pointer; font-family: inherit;
   transition: all .2s;
 }
-.btn-cta:hover { background: #33EAFF; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,229,255,.3); }
+.btn-cta:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(var(--accent-rgb),.3); }
 
 /* ── HERO ── */
 .hero {
@@ -139,7 +205,7 @@ nav {
 .hero-glow {
   position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
   width: 600px; height: 400px;
-  background: radial-gradient(ellipse, rgba(0,229,255,.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(var(--accent-rgb),.07) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -504,7 +570,7 @@ nav {
   padding: 14px; font-size: 14px; font-weight: 700;
   cursor: pointer; font-family: inherit; transition: all .2s;
 }
-.modal-btn-primary:hover { background: #33EAFF; box-shadow: 0 8px 24px rgba(0,229,255,.25); }
+.modal-btn-primary:hover { filter: brightness(1.1); box-shadow: 0 8px 24px rgba(var(--accent-rgb),.25); }
 .modal-btn-sec {
   background: var(--surface2); color: var(--muted2);
   border: 1px solid var(--border2); border-radius: 10px;
@@ -573,6 +639,10 @@ footer {
     <a href="#" class="nav-pill">About</a>
   </div>
   <div class="nav-right">
+    <button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+      <svg class="sun-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <svg class="moon-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
     <span class="badge-free">FREE FOREVER</span>
     <button class="btn-cta" onclick="openSubmit()">Submit a Flow</button>
   </div>
@@ -1286,6 +1356,13 @@ function copySpec(id) {
 
 function openSubmit() {
   alert('Submissions opening soon!\n\nDrop your email at the newsletter link below and we\'ll notify you when the community contribution portal launches.');
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('flowdrop-theme', newTheme);
 }
 
 // Init
