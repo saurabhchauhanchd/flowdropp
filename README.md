@@ -1,6 +1,3 @@
-# flowdropp
-
-
 # FlowDrop — Free Automation Workflow Ideas
 
 A beautiful, searchable library of 45+ battle-tested automation workflows across 13 platforms and use cases.

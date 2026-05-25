@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlowDrop — Free Automation Workflow Ideas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0C0E14;
+  --surface: #13161F;
+  --surface2: #1A1E2A;
+  --border: #252A38;
+  --border2: #2E3447;
+  --text: #E8EAF0;
+  --muted: #6B7280;
+  --muted2: #9CA3AF;
+  --accent: #00E5FF;
+  --accent2: #7C3AED;
+  --accent3: #10B981;
+  --accent4: #F59E0B;
+  --accent5: #EF4444;
+  --accent6: #EC4899;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  opacity: .025;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* GRID LINES BG */
+body::after {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0,229,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px;
+  height: 64px;
+  background: rgba(12,14,20,.85);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+}
+
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px; font-weight: 800;
+  letter-spacing: -1px;
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text);
+}
+
+.logo-mark {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.logo-mark::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  border: 2.5px solid var(--bg);
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1.5s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.logo span { color: var(--accent); }
+
+.nav-center {
+  display: flex; align-items: center; gap: 6px;
+}
+.nav-pill {
+  padding: 6px 14px; border-radius: 6px;
+  font-size: 13px; font-weight: 600;
+  color: var(--muted2); background: transparent;
+  border: none; cursor: pointer; font-family: inherit;
+  transition: all .2s;
+  text-decoration: none;
+}
+.nav-pill:hover, .nav-pill.active { color: var(--text); background: var(--surface2); }
+
+.nav-right { display: flex; align-items: center; gap: 12px; }
+.badge-free {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  background: rgba(0,229,255,.1); color: var(--accent);
+  border: 1px solid rgba(0,229,255,.2);
+  padding: 4px 10px; border-radius: 100px;
+  letter-spacing: .5px;
+}
+.btn-cta {
+  background: var(--accent); color: var(--bg);
+  border: none; border-radius: 8px;
+  padding: 9px 20px; font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  transition: all .2s;
+}
+.btn-cta:hover { background: #33EAFF; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,229,255,.3); }
+
+/* ── HERO ── */
+.hero {
+  position: relative; z-index: 1;
+  padding: 100px 48px 80px;
+  max-width: 1200px; margin: 0 auto;
+}
+
+.hero-glow {
+  position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(0,229,255,.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 500;
+  color: var(--accent); letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.2; } }
+
+.hero h1 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(44px, 6vw, 80px);
+  font-weight: 700; line-height: 1.0;
+  letter-spacing: -2px;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+.hero h1 em {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 17px; color: var(--muted2);
+  max-width: 520px;
+  line-height: 1.7; font-weight: 400;
+  margin-bottom: 48px;
+}
+
+.hero-stats {
+  display: flex; gap: 40px; flex-wrap: wrap;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.stat { display: flex; flex-direction: column; gap: 4px; }
+.stat-num {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 32px; font-weight: 700;
+  color: var(--text); line-height: 1;
+}
+.stat-num span { color: var(--accent); }
+.stat-label { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
+
+/* ── CATEGORY STRIP ── */
+.cat-strip {
+  position: relative; z-index: 1;
+  padding: 0 48px 0;
+  max-width: 1200px; margin: 0 auto 48px;
+}
+
+.cat-strip-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.cat-scroll {
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+
+.cat-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 10px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  cursor: pointer; font-family: inherit;
+  font-size: 13px; font-weight: 600; color: var(--muted2);
+  transition: all .2s; white-space: nowrap;
+}
+.cat-chip .cat-icon { font-size: 15px; }
+.cat-chip:hover { border-color: var(--border2); color: var(--text); background: var(--surface2); }
+.cat-chip.active { color: var(--bg); border-color: transparent; }
+
+/* Category color themes */
+.cat-chip[data-cat="crm"].active       { background: #0891B2; }
+.cat-chip[data-cat="marketing"].active  { background: #7C3AED; }
+.cat-chip[data-cat="support"].active    { background: #059669; }
+.cat-chip[data-cat="erp"].active        { background: #D97706; }
+.cat-chip[data-cat="hr"].active         { background: #DB2777; }
+.cat-chip[data-cat="pm"].active         { background: #2563EB; }
+.cat-chip[data-cat="ecommerce"].active  { background: #EA580C; }
+.cat-chip[data-cat="it"].active         { background: #6D28D9; }
+.cat-chip[data-cat="knowledge"].active  { background: #0D9488; }
+.cat-chip[data-cat="data"].active       { background: #1D4ED8; }
+.cat-chip[data-cat="automation"].active { background: #B45309; }
+.cat-chip[data-cat="ai"].active         { background: #BE185D; }
+.cat-chip[data-cat="all"].active        { background: var(--accent); }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 48px 32px;
+  max-width: 1200px; margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.toolbar-left { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
+.diff-chip {
+  padding: 7px 14px; border-radius: 8px;
+  border: 1px solid var(--border);
+  background: transparent; cursor: pointer;
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  color: var(--muted2); transition: all .18s;
+  display: flex; align-items: center; gap: 6px;
+}
+.diff-chip:hover { border-color: var(--border2); color: var(--text); }
+.diff-chip.active { border-color: rgba(255,255,255,.15); background: var(--surface2); color: var(--text); }
+.diff-dot { width: 7px; height: 7px; border-radius: 50%; }
+.dot-easy { background: #10B981; }
+.dot-med  { background: #F59E0B; }
+.dot-hard { background: #EF4444; }
+
+.count-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--muted);
+  margin-left: auto; align-self: center;
+  white-space: nowrap;
+}
+.count-badge strong { color: var(--text); }
+
+.search-box {
+  position: relative;
+}
+.search-box input {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 9px 16px 9px 38px;
+  font-family: inherit; font-size: 13px;
+  color: var(--text); width: 240px; outline: none;
+  transition: border-color .2s;
+}
+.search-box input::placeholder { color: var(--muted); }
+.search-box input:focus { border-color: var(--accent); }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+
+/* ── GRID ── */
+.grid {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 48px 100px;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 26px;
+  display: flex; flex-direction: column; gap: 14px;
+  cursor: pointer;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+  position: relative; overflow: hidden;
+  animation: cardIn .4s ease both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity .25s;
+  pointer-events: none;
+}
+
+.card:hover { transform: translateY(-5px); border-color: var(--border2); }
+.card:hover::before { opacity: 1; }
+
+/* Per-category card accent */
+.card[data-cat="crm"]:hover       { box-shadow: 0 16px 48px rgba(8,145,178,.15); }
+.card[data-cat="marketing"]:hover  { box-shadow: 0 16px 48px rgba(124,58,237,.15); }
+.card[data-cat="support"]:hover    { box-shadow: 0 16px 48px rgba(5,150,105,.15); }
+.card[data-cat="erp"]:hover        { box-shadow: 0 16px 48px rgba(217,119,6,.15); }
+.card[data-cat="hr"]:hover         { box-shadow: 0 16px 48px rgba(219,39,119,.15); }
+.card[data-cat="pm"]:hover         { box-shadow: 0 16px 48px rgba(37,99,235,.15); }
+.card[data-cat="ecommerce"]:hover  { box-shadow: 0 16px 48px rgba(234,88,12,.15); }
+.card[data-cat="it"]:hover         { box-shadow: 0 16px 48px rgba(109,40,217,.15); }
+.card[data-cat="knowledge"]:hover  { box-shadow: 0 16px 48px rgba(13,148,136,.15); }
+.card[data-cat="data"]:hover       { box-shadow: 0 16px 48px rgba(29,78,216,.15); }
+.card[data-cat="automation"]:hover { box-shadow: 0 16px 48px rgba(180,83,9,.15); }
+.card[data-cat="ai"]:hover         { box-shadow: 0 16px 48px rgba(190,24,93,.15); }
+
+.card-top {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+}
+.card-icon-wrap {
+  width: 46px; height: 46px; flex-shrink: 0;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+}
+
+.card-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.diff-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .8px;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.d-easy   { background: rgba(16,185,129,.15); color: #10B981; }
+.d-medium { background: rgba(245,158,11,.15); color: #F59E0B; }
+.d-hard   { background: rgba(239,68,68,.15);  color: #EF4444; }
+
+.steps-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--muted);
+}
+
+.card-platform {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted);
+}
+
+.card-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 17px; font-weight: 700;
+  line-height: 1.3; color: var(--text);
+}
+
+.card-desc {
+  font-size: 13px; color: var(--muted2);
+  line-height: 1.65; flex: 1;
+}
+
+.card-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-size: 11px; font-weight: 600; letter-spacing: .3px;
+  padding: 3px 9px; border-radius: 6px;
+  border: 1px solid var(--border2);
+  color: var(--muted2); background: var(--surface2);
+}
+
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 14px; border-top: 1px solid var(--border);
+}
+.view-btn {
+  background: var(--surface2); color: var(--text);
+  border: 1px solid var(--border2); border-radius: 8px;
+  padding: 8px 16px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; gap: 6px;
+  transition: all .2s;
+}
+.view-btn:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.card-saves {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--muted);
+  display: flex; align-items: center; gap: 4px;
+}
+
+/* ── EMPTY STATE ── */
+.empty {
+  grid-column: 1/-1;
+  text-align: center; padding: 80px 20px;
+  color: var(--muted);
+}
+.empty-title { font-family: 'Libre Baskerville', serif; font-size: 22px; color: var(--muted2); margin-bottom: 8px; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(5,7,12,.75);
+  backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  max-width: 640px; width: 100%;
+  max-height: 88vh; overflow-y: auto;
+  padding: 40px;
+  position: relative;
+  animation: mUp .3s cubic-bezier(.16,1,.3,1);
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+}
+@keyframes mUp {
+  from { opacity: 0; transform: scale(.96) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-close {
+  position: sticky; top: 0; float: right;
+  background: var(--surface2); border: 1px solid var(--border2);
+  width: 34px; height: 34px; border-radius: 8px;
+  cursor: pointer; font-size: 16px; color: var(--muted2);
+  transition: all .2s; margin-bottom: -34px;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--border); color: var(--text); }
+
+.modal-platform {
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 10px;
+}
+.modal-title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 24px; font-weight: 700;
+  margin-bottom: 10px; line-height: 1.2;
+}
+.modal-desc { color: var(--muted2); font-size: 14px; margin-bottom: 32px; line-height: 1.7; }
+
+.flow-line {
+  display: flex; gap: 16px;
+  position: relative;
+}
+.flow-line:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 19px; top: 42px;
+  width: 2px;
+  height: calc(100% - 8px);
+  background: linear-gradient(to bottom, var(--border2), transparent);
+}
+.step-circle {
+  width: 40px; height: 40px; flex-shrink: 0;
+  border-radius: 50%; border: 1.5px solid var(--border2);
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 500; color: var(--accent);
+  position: relative; z-index: 1; margin-top: 2px;
+}
+.step-content { padding-bottom: 24px; }
+.step-title { font-weight: 700; font-size: 14px; margin-bottom: 3px; color: var(--text); }
+.step-body { font-size: 13px; color: var(--muted2); line-height: 1.6; }
+
+.modal-actions {
+  display: flex; gap: 10px; margin-top: 32px;
+  padding-top: 24px; border-top: 1px solid var(--border);
+}
+.modal-btn-primary {
+  flex: 1; background: var(--accent); color: var(--bg);
+  border: none; border-radius: 10px;
+  padding: 14px; font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: inherit; transition: all .2s;
+}
+.modal-btn-primary:hover { background: #33EAFF; box-shadow: 0 8px 24px rgba(0,229,255,.25); }
+.modal-btn-sec {
+  background: var(--surface2); color: var(--muted2);
+  border: 1px solid var(--border2); border-radius: 10px;
+  padding: 14px 20px; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: all .2s;
+}
+.modal-btn-sec:hover { color: var(--text); border-color: var(--border); }
+
+/* ── SECTION DIVIDER ── */
+.section-divider {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 48px 40px;
+  max-width: 1200px; margin: 0 auto;
+}
+.div-line { flex: 1; height: 1px; background: var(--border); }
+.div-text {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  border-top: 1px solid var(--border);
+  padding: 40px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-brand {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px; font-weight: 800;
+  letter-spacing: -1px;
+}
+.footer-brand span { color: var(--accent); }
+.footer-note { font-size: 12px; color: var(--muted); }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { font-size: 13px; color: var(--muted2); text-decoration: none; transition: color .2s; font-weight: 600; }
+.footer-links a:hover { color: var(--accent); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-center { display: none; }
+  .hero { padding: 60px 20px 48px; }
+  .cat-strip, .toolbar, .grid, footer { padding-left: 20px; padding-right: 20px; }
+  .section-divider { padding-left: 20px; padding-right: 20px; }
+  .search-box input { width: 100%; }
+  .modal { padding: 28px 20px; }
+  .hero h1 { letter-spacing: -1px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-mark"></div>
+    Flow<span>Drop</span>
+  </a>
+  <div class="nav-center">
+    <a href="#" class="nav-pill active">Browse</a>
+    <a href="#" class="nav-pill">Platforms</a>
+    <a href="#" class="nav-pill">About</a>
+  </div>
+  <div class="nav-right">
+    <span class="badge-free">FREE FOREVER</span>
+    <button class="btn-cta" onclick="openSubmit()">Submit a Flow</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">Automation workflow library</div>
+  <h1>Steal the best<br><em>automations</em> in<br>the game.</h1>
+  <p class="hero-sub">Battle-tested workflow ideas across CRM, Marketing, HR, Ops, AI, and more. No paywall. No account. Just steal and build.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num" id="wf-count">60<span>+</span></div>
+      <div class="stat-label">Workflows</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12<span>+</span></div>
+      <div class="stat-label">Platforms</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100<span>%</span></div>
+      <div class="stat-label">Free</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0<span>×</span></div>
+      <div class="stat-label">Paywalls</div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORY STRIP -->
+<div class="cat-strip">
+  <div class="cat-strip-label">Browse by platform</div>
+  <div class="cat-scroll" id="cat-strip">
+    <button class="cat-chip active" data-cat="all" onclick="filterCat(this,'all')"><span class="cat-icon">⚡</span>All</button>
+    <button class="cat-chip" data-cat="crm" onclick="filterCat(this,'crm')"><span class="cat-icon">💼</span>CRM & RevOps</button>
+    <button class="cat-chip" data-cat="marketing" onclick="filterCat(this,'marketing')"><span class="cat-icon">📣</span>Marketing</button>
+    <button class="cat-chip" data-cat="support" onclick="filterCat(this,'support')"><span class="cat-icon">🎧</span>Customer Support</button>
+    <button class="cat-chip" data-cat="erp" onclick="filterCat(this,'erp')"><span class="cat-icon">🏭</span>ERP & Ops</button>
+    <button class="cat-chip" data-cat="hr" onclick="filterCat(this,'hr')"><span class="cat-icon">👥</span>HR & Recruiting</button>
+    <button class="cat-chip" data-cat="pm" onclick="filterCat(this,'pm')"><span class="cat-icon">📋</span>Project Mgmt</button>
+    <button class="cat-chip" data-cat="ecommerce" onclick="filterCat(this,'ecommerce')"><span class="cat-icon">🛒</span>E-commerce</button>
+    <button class="cat-chip" data-cat="it" onclick="filterCat(this,'it')"><span class="cat-icon">🔧</span>IT & Internal Ops</button>
+    <button class="cat-chip" data-cat="knowledge" onclick="filterCat(this,'knowledge')"><span class="cat-icon">📚</span>Knowledge Mgmt</button>
+    <button class="cat-chip" data-cat="data" onclick="filterCat(this,'data')"><span class="cat-icon">📊</span>Data & Analytics</button>
+    <button class="cat-chip" data-cat="automation" onclick="filterCat(this,'automation')"><span class="cat-icon">🔗</span>Automation Platforms</button>
+    <button class="cat-chip" data-cat="ai" onclick="filterCat(this,'ai')"><span class="cat-icon">🤖</span>AI Platforms</button>
+  </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button class="diff-chip active" onclick="filterDiff(this,'all')">All levels</button>
+    <button class="diff-chip" onclick="filterDiff(this,'easy')"><span class="diff-dot dot-easy"></span>Beginner</button>
+    <button class="diff-chip" onclick="filterDiff(this,'medium')"><span class="diff-dot dot-med"></span>Intermediate</button>
+    <button class="diff-chip" onclick="filterDiff(this,'hard')"><span class="diff-dot dot-hard"></span>Advanced</button>
+  </div>
+  <span class="count-badge"><strong id="showing">0</strong> workflows</span>
+  <div class="search-box">
+    <svg class="search-icon" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search flows, platforms…" oninput="doSearch(this.value)">
+  </div>
+</div>
+
+<!-- SECTION DIVIDER -->
+<div class="section-divider">
+  <div class="div-line"></div>
+  <span class="div-text" id="section-label">All Workflows</span>
+  <div class="div-line"></div>
+</div>
+
+<!-- GRID -->
+<div class="grid" id="grid"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">Flow<span>Drop</span></div>
+    <div class="footer-note" style="margin-top:6px">Free workflow ideas for automation professionals.</div>
+  </div>
+  <div class="footer-links">
+    <a href="#">Submit a Flow</a>
+    <a href="#">Newsletter</a>
+    <a href="#">GitHub</a>
+  </div>
+</footer>
+
+<script>
+const FLOWS = [
+  // ── CRM & REVOPS ──
+  { id:1, cat:'crm', platform:'HubSpot', icon:'🎯', diff:'easy', steps:4, saves:142,
+    title:'Lead Score Alert to Sales Rep',
+    desc:'Automatically notify a rep the moment a contact hits your lead score threshold — while the lead is still hot.',
+    tags:['Lead Scoring','Sales Alerts'],
+    flow:[
+      {t:'Trigger: Lead Score Threshold',d:'Enrollment trigger: Lead score ≥ 60'},
+      {t:'If/Then: Contact owner known?',d:'Branch on whether a contact owner is assigned'},
+      {t:'Send Internal Email',d:'Email contact owner: "🔥 [Contact] just hit lead score 60 — follow up now!"'},
+      {t:'Create Task',d:'Task: "Call [Contact]" due in 1 business day, assigned to contact owner'},
+    ]},
+  { id:2, cat:'crm', platform:'HubSpot', icon:'🔄', diff:'medium', steps:4, saves:93,
+    title:'Deal Stage Stagnation Alert',
+    desc:'Flag deals that haven\'t moved in 14+ days and route them to the manager for review.',
+    tags:['Deal Pipeline','Manager Alerts'],
+    flow:[
+      {t:'Trigger: Deal-based workflow',d:'Enrollment: Deal is in any active stage'},
+      {t:'Delay: 14 days',d:'Wait 14 days without a stage change'},
+      {t:'If/Then: Still same stage?',d:'Check deal stage property hasn\'t changed since enrollment'},
+      {t:'Notify Manager',d:'Internal notification: "⚠️ Deal [Name] stagnant 14 days — needs review"'},
+    ]},
+  { id:3, cat:'crm', platform:'Salesforce', icon:'☁️', diff:'medium', steps:5, saves:178,
+    title:'Opportunity Closed-Won Onboarding Trigger',
+    desc:'The moment a deal closes, automatically kick off the customer onboarding sequence across teams.',
+    tags:['Onboarding','Handoff'],
+    flow:[
+      {t:'Trigger: Opportunity Stage = Closed Won',d:'Process Builder / Flow trigger on Stage field change'},
+      {t:'Create Onboarding Record',d:'Auto-create a custom Onboarding object linked to Account'},
+      {t:'Assign CS Owner',d:'Round-robin assignment to Customer Success team queue'},
+      {t:'Send Welcome Email',d:'Email template to new customer with next steps'},
+      {t:'Create Task Checklist',d:'Generate 5 onboarding tasks for the CS rep with due dates'},
+    ]},
+  { id:4, cat:'crm', platform:'HubSpot', icon:'🧊', diff:'medium', steps:4, saves:203,
+    title:'Re-Engage Cold Leads (6-Month)',
+    desc:'Automatically reach out to leads who haven\'t engaged in 6 months with a low-pressure check-in.',
+    tags:['Re-engagement','Cold Leads'],
+    flow:[
+      {t:'Trigger: Inactivity',d:'Last activity date > 6 months AND Lifecycle Stage = Lead'},
+      {t:'Send Email 1',d:'"Still interested in [Problem you solve]?" — short 3-liner, no hard sell'},
+      {t:'Delay: 7 days',d:'Wait for a response before next touch'},
+      {t:'Branch: Engaged?',d:'Yes → Notify rep to follow up. No → Move to suppression list.'},
+    ]},
+  { id:5, cat:'crm', platform:'Pipedrive', icon:'📈', diff:'easy', steps:3, saves:87,
+    title:'Auto-Advance Deal After Call Logged',
+    desc:'When a call is logged against a deal, automatically move it to the next pipeline stage.',
+    tags:['Pipeline','Activity Triggers'],
+    flow:[
+      {t:'Trigger: Activity Created',d:'Activity type = Call, linked to a Deal'},
+      {t:'Update Deal Stage',d:'Move deal to next stage (configured per pipeline)'},
+      {t:'Send Notification',d:'Ping deal owner in Slack/email: "Deal advanced after call ✅"'},
+    ]},
+
+  // ── MARKETING ──
+  { id:6, cat:'marketing', platform:'HubSpot', icon:'📧', diff:'medium', steps:5, saves:387,
+    title:'New Subscriber 5-Email Nurture',
+    desc:'A 5-email drip that moves a cold subscriber to product-aware in 14 days. Works for SaaS and services.',
+    tags:['Email Nurture','Lead Gen'],
+    flow:[
+      {t:'Trigger: Form Submission',d:'Any top-of-funnel newsletter or lead magnet form'},
+      {t:'Email 1 (Day 0)',d:'"Welcome! Here\'s what to expect…" — introduce brand and tone'},
+      {t:'Email 2 (Day 3)',d:'"Our best content for [pain point]" — educational value email'},
+      {t:'Email 3 (Day 7)',d:'"How [Customer] achieved [Result]" — social proof case study'},
+      {t:'Email 4 (Day 12)',d:'"Ready to go deeper?" — soft CTA to book a call or start trial'},
+    ]},
+  { id:7, cat:'marketing', platform:'Klaviyo', icon:'🛍️', diff:'hard', steps:6, saves:529,
+    title:'Abandoned Cart Recovery (3-Touch)',
+    desc:'Three-touch sequence to recover carts with a discount only on the final email to protect margin.',
+    tags:['Abandoned Cart','Revenue Recovery'],
+    flow:[
+      {t:'Trigger: Checkout Abandoned',d:'Custom event: checkout_started but no purchase in 60 min'},
+      {t:'Email 1 (1 hour)',d:'"You left something behind…" — no discount, just cart reminder'},
+      {t:'Email 2 (24 hours)',d:'"Still thinking it over?" — add social proof and reviews'},
+      {t:'Check: Purchase Made?',d:'If purchased → exit flow. If not → continue.'},
+      {t:'Email 3 (48 hours)',d:'"Last chance: 10% off for next 24 hrs" — time-limited offer'},
+      {t:'SMS Follow-up',d:'Optional: 1-line SMS nudge if email unopened for 4 hours'},
+    ]},
+  { id:8, cat:'marketing', platform:'ActiveCampaign', icon:'🎂', diff:'easy', steps:3, saves:211,
+    title:'Birthday Discount Email',
+    desc:'Send a personalised discount code on a contact\'s birthday to drive repeat purchases.',
+    tags:['Retention','Personalisation'],
+    flow:[
+      {t:'Trigger: Birthday Date = Today',d:'Date-based recurring trigger on Birthday custom field'},
+      {t:'Send Email',d:'"Happy Birthday [First Name]! 🎂 Here\'s 20% off — just for you."'},
+      {t:'Log to List',d:'Add to "Birthday Promo Sent" static list for reporting'},
+    ]},
+  { id:9, cat:'marketing', platform:'Braze', icon:'🎤', diff:'medium', steps:5, saves:164,
+    title:'Webinar Follow-Up Sequence',
+    desc:'Segment attendees, no-shows, and registrants and send tailored follow-ups within 1 hour of event end.',
+    tags:['Webinar','Post-Event'],
+    flow:[
+      {t:'Trigger: Event Ends',d:'Webhook from webinar platform (Zoom, Hopin) fires to Braze'},
+      {t:'Segment: Attended vs No-Show',d:'Split audience by attendance_status property'},
+      {t:'Email: Attendees',d:'"Thanks for joining! Here\'s the recording + resources."'},
+      {t:'Email: No-Shows',d:'"Sorry you missed it — watch on-demand here."'},
+      {t:'Follow-up: Day 3',d:'Both segments: "Any questions after watching?" soft CTA'},
+    ]},
+  { id:10, cat:'marketing', platform:'Mailchimp', icon:'🎯', diff:'easy', steps:4, saves:143,
+    title:'Re-Engagement Campaign for Dormant Subscribers',
+    desc:'Automatically identify and attempt to re-engage subscribers who haven\'t opened an email in 90 days.',
+    tags:['List Hygiene','Re-engagement'],
+    flow:[
+      {t:'Trigger: Inactivity Segment',d:'No email open in 90 days AND subscribed status'},
+      {t:'Email 1',d:'"We miss you — here\'s what you\'ve missed lately" — best of digest'},
+      {t:'If/Then: Opened?',d:'Yes → tag as re-engaged and exit. No → continue.'},
+      {t:'Email 2 (7 days)',d:'"Should we part ways?" — last chance with easy unsubscribe CTA'},
+    ]},
+
+  // ── CUSTOMER SUPPORT ──
+  { id:11, cat:'support', platform:'Zendesk', icon:'🎧', diff:'medium', steps:5, saves:219,
+    title:'Ticket Triage by Keyword + Priority',
+    desc:'Auto-classify and route incoming tickets based on keywords, customer tier, and urgency signals.',
+    tags:['Ticket Routing','Triage'],
+    flow:[
+      {t:'Trigger: New Ticket Created',d:'Any inbound ticket from email, chat, or API'},
+      {t:'Classify by Keyword',d:'Scan subject/body for: "refund", "billing", "urgent", "broken", etc.'},
+      {t:'Set Priority + Tags',d:'Auto-set priority (low/normal/urgent) and apply category tags'},
+      {t:'Route to Queue',d:'Assign to correct group: Billing, Technical, Returns, etc.'},
+      {t:'Send Acknowledgement',d:'Auto-reply: "Got it! Your ticket #[ID] is being reviewed by [Team]."'},
+    ]},
+  { id:12, cat:'support', platform:'Intercom', icon:'💬', diff:'medium', steps:4, saves:176,
+    title:'NPS Detractor Immediate Escalation',
+    desc:'Route NPS detractors to the customer success team within minutes of the survey response.',
+    tags:['NPS','Escalation','CS'],
+    flow:[
+      {t:'Trigger: NPS Response Received',d:'NPS Score ≤ 6 submitted via in-app or email survey'},
+      {t:'Branch: Score Range',d:'0–3 = Critical. 4–6 = Watch. 7–8 = Passive (exit).'},
+      {t:'Create Task + Notify CS',d:'Urgent task for CS rep + Slack alert with score and verbatim comment'},
+      {t:'Enroll in Recovery Sequence',d:'Add to "Detractor Recovery" drip — check-in email in 48 hrs'},
+    ]},
+  { id:13, cat:'support', platform:'Freshdesk', icon:'⏱️', diff:'hard', steps:5, saves:98,
+    title:'SLA Breach Warning + Auto-Escalation',
+    desc:'Warn agents 30 minutes before SLA breach. Auto-escalate to supervisor if not responded within SLA.',
+    tags:['SLA','Escalation','Compliance'],
+    flow:[
+      {t:'Trigger: Ticket SLA Timer',d:'Monitor ticket creation time vs. SLA target'},
+      {t:'Warning at T-30min',d:'Email/Slack to assigned agent: "⚠️ SLA due in 30 minutes!"'},
+      {t:'Check at SLA Deadline',d:'If ticket still open at SLA boundary → escalate'},
+      {t:'Escalate to Supervisor',d:'Assign to supervisor queue + notify manager with ticket link'},
+      {t:'Log SLA Breach',d:'Update custom SLA_breached field to TRUE for reporting'},
+    ]},
+  { id:14, cat:'support', platform:'Gorgias', icon:'↩️', diff:'easy', steps:3, saves:312,
+    title:'Auto-Approve Refund Under $50',
+    desc:'For e-commerce, automatically approve and process refunds under $50 with no human review needed.',
+    tags:['Refunds','E-commerce','Automation'],
+    flow:[
+      {t:'Trigger: Refund Request Detected',d:'Keywords: "refund", "return", "money back" in ticket'},
+      {t:'Check Order Value',d:'Pull order total via Shopify integration. If < $50 → auto-approve.'},
+      {t:'Process + Reply',d:'Trigger Shopify refund API + send: "Your refund of $[X] is on its way!"'},
+    ]},
+
+  // ── ERP & OPS ──
+  { id:15, cat:'erp', platform:'NetSuite', icon:'📄', diff:'hard', steps:6, saves:74,
+    title:'Automated PO Approval Workflow',
+    desc:'Route purchase orders through multi-level approval based on amount thresholds, with auto-escalation.',
+    tags:['Procurement','Approvals','Finance'],
+    flow:[
+      {t:'Trigger: PO Created',d:'New Purchase Order submitted in NetSuite'},
+      {t:'Route by Amount',d:'< $5K → Manager. $5K–$50K → Director. > $50K → CFO.'},
+      {t:'Send Approval Request',d:'Email with PO summary, link to approve/reject in NetSuite'},
+      {t:'Reminder at 48 hrs',d:'If no action → escalation reminder to approver'},
+      {t:'Auto-escalate at 72 hrs',d:'Escalate to next-level approver if still no response'},
+      {t:'Finalize',d:'On approval → update PO status and notify requester'},
+    ]},
+  { id:16, cat:'erp', platform:'SAP S/4HANA', icon:'🏭', diff:'hard', steps:5, saves:56,
+    title:'Automated Invoice Matching & Exception Handling',
+    desc:'3-way match invoices against POs and goods receipts. Flag exceptions for manual review only.',
+    tags:['AP Automation','Invoice Processing'],
+    flow:[
+      {t:'Trigger: Invoice Received',d:'EDI or email invoice captured into SAP'},
+      {t:'3-Way Match Check',d:'Compare Invoice vs. PO vs. Goods Receipt for qty and price'},
+      {t:'If Match Passes',d:'Auto-post invoice to accounts payable queue for payment'},
+      {t:'If Exception',d:'Flag discrepancy type (price, qty, vendor) and route to AP team'},
+      {t:'Notify Vendor',d:'Auto-email vendor if invoice rejected with reason code'},
+    ]},
+  { id:17, cat:'erp', platform:'Odoo', icon:'📦', diff:'medium', steps:4, saves:89,
+    title:'Low Stock Reorder Alert',
+    desc:'Automatically create a draft PO when inventory falls below the reorder point.',
+    tags:['Inventory','Procurement'],
+    flow:[
+      {t:'Trigger: Stock Level Check',d:'Scheduled daily check OR real-time stock move event'},
+      {t:'Compare vs Reorder Point',d:'If qty_on_hand < reorder_point for product → trigger'},
+      {t:'Create Draft PO',d:'Auto-generate PO to preferred vendor with reorder qty'},
+      {t:'Notify Purchasing Team',d:'Email draft PO link for 1-click approval'},
+    ]},
+
+  // ── HR & RECRUITING ──
+  { id:18, cat:'hr', platform:'Greenhouse', icon:'🧑‍💼', diff:'medium', steps:5, saves:134,
+    title:'Interview Scheduling Automation',
+    desc:'Automatically send scheduling links to candidates after application review, with calendar sync.',
+    tags:['Interview Scheduling','Recruiting'],
+    flow:[
+      {t:'Trigger: Application moves to Phone Screen',d:'Stage change in Greenhouse pipeline'},
+      {t:'Send Scheduling Email',d:'Email candidate with Calendly/scheduling link personalised to role'},
+      {t:'Calendar Block Created',d:'When slot chosen → auto-create calendar event for interviewer'},
+      {t:'Send Prep Email to Candidate',d:'24 hrs before: interview agenda, who they\'re meeting, tips'},
+      {t:'Post-Interview Task',d:'Create task for interviewer: submit scorecard within 24 hrs'},
+    ]},
+  { id:19, cat:'hr', platform:'Workday', icon:'🎉', diff:'hard', steps:6, saves:108,
+    title:'Employee Onboarding Day-One Flow',
+    desc:'Trigger a full onboarding journey the moment a new hire is activated in Workday.',
+    tags:['Onboarding','New Hire'],
+    flow:[
+      {t:'Trigger: Worker Status = Active',d:'New hire start date reached in Workday'},
+      {t:'Provision Accounts',d:'Auto-create Google/M365, Slack, Jira, GitHub access via SCIM'},
+      {t:'Send Welcome Email',d:'Personalised welcome from manager with first-week agenda'},
+      {t:'Assign Onboarding Tasks',d:'Create 30-60-90 day task list in HR system'},
+      {t:'IT Equipment Notification',d:'Notify IT to have laptop/equipment ready at desk'},
+      {t:'Day 7 Check-in',d:'Auto-trigger pulse survey: "How are the first 7 days going?"'},
+    ]},
+  { id:20, cat:'hr', platform:'BambooHR', icon:'🚪', diff:'medium', steps:4, saves:76,
+    title:'Employee Offboarding Checklist Trigger',
+    desc:'When an employee\'s termination date is set, auto-create a cross-functional offboarding checklist.',
+    tags:['Offboarding','Compliance'],
+    flow:[
+      {t:'Trigger: Termination Date Set',d:'Employee record updated with separation date in BambooHR'},
+      {t:'Create Tasks for Each Team',d:'IT: revoke access. Finance: final payroll. HR: exit interview.'},
+      {t:'Schedule Exit Interview',d:'Auto-email HR to schedule exit interview 2 days before last day'},
+      {t:'Day-of Deprovisioning',d:'On last day → trigger account deactivation across all systems'},
+    ]},
+  { id:21, cat:'hr', platform:'Rippling', icon:'📅', diff:'easy', steps:3, saves:157,
+    title:'Performance Review Cycle Reminder',
+    desc:'Automatically remind managers and employees of upcoming review deadlines 2 weeks, 1 week, and 1 day out.',
+    tags:['Performance Reviews','HR Ops'],
+    flow:[
+      {t:'Trigger: Review Cycle Dates',d:'Scheduled annually/semi-annually based on review_due_date field'},
+      {t:'Send Tiered Reminders',d:'T-14 days: heads up. T-7 days: action required. T-1 day: final notice.'},
+      {t:'Escalate if Overdue',d:'If not submitted by deadline → notify HR admin for manual follow-up'},
+    ]},
+
+  // ── PROJECT MANAGEMENT ──
+  { id:22, cat:'pm', platform:'Asana', icon:'✅', diff:'easy', steps:3, saves:198,
+    title:'Auto-Assign Task on Project Stage Change',
+    desc:'When a project moves to a new stage, automatically assign the relevant task owner and due date.',
+    tags:['Task Assignment','Workflow'],
+    flow:[
+      {t:'Trigger: Project Stage Changes',d:'Custom field "Stage" changes to new value'},
+      {t:'Assign Owner + Due Date',d:'Apply stage-specific owner (from rules table) and due date offset'},
+      {t:'Send Notification',d:'Notify new owner: "You\'ve been assigned [Task] in [Project]."'},
+    ]},
+  { id:23, cat:'pm', platform:'Jira', icon:'🐛', diff:'medium', steps:5, saves:145,
+    title:'Sprint Planning Auto-Scaffold',
+    desc:'At the start of each sprint, automatically create standard ceremonies and assign ticket allocations.',
+    tags:['Sprint Planning','Agile'],
+    flow:[
+      {t:'Trigger: New Sprint Created',d:'Sprint start event in Jira Software'},
+      {t:'Create Ceremony Tickets',d:'Auto-create: Sprint Planning, Daily Standup, Retrospective tickets'},
+      {t:'Move Backlog Tickets',d:'Pull top-priority backlog tickets up to sprint capacity'},
+      {t:'Assign Load Balancing',d:'Distribute tickets evenly across dev team based on story points'},
+      {t:'Notify Team',d:'Slack: "Sprint [X] is live — [N] tickets assigned. Let\'s go!"'},
+    ]},
+  { id:24, cat:'pm', platform:'Monday.com', icon:'🚨', diff:'medium', steps:4, saves:112,
+    title:'Project Risk Alert Automation',
+    desc:'Automatically flag projects at risk when due dates slip or status stays Red for 48+ hours.',
+    tags:['Risk Management','Status Alerts'],
+    flow:[
+      {t:'Trigger: Status = Red for 48h',d:'Monitor status column for stuck items'},
+      {t:'Notify Project Manager',d:'Email + in-app notification: "[Project] has been Red for 2 days"'},
+      {t:'Escalate to Director',d:'If still Red at 96 hours → escalate to department head'},
+      {t:'Log Risk',d:'Auto-create Risk item in master risk register board'},
+    ]},
+
+  // ── E-COMMERCE ──
+  { id:25, cat:'ecommerce', platform:'Shopify', icon:'📦', diff:'medium', steps:5, saves:341,
+    title:'Post-Purchase Review Request Sequence',
+    desc:'Ask for a review at the perfect moment — after delivery is confirmed, not at checkout.',
+    tags:['Reviews','Post-Purchase'],
+    flow:[
+      {t:'Trigger: Order Delivered',d:'Fulfillment status = Delivered (via shipping webhook)'},
+      {t:'Delay: 3 days',d:'Give customer time to actually use the product'},
+      {t:'Email: Review Request',d:'"How\'s your [Product]? We\'d love your honest review." + review link'},
+      {t:'If No Review (7 days)',d:'Send 1 gentle follow-up: "One quick minute? It means a lot."'},
+      {t:'Tag Reviewer',d:'Apply "left_review" tag to customer for segment exclusion'},
+    ]},
+  { id:26, cat:'ecommerce', platform:'Klaviyo', icon:'🔁', diff:'hard', steps:6, saves:287,
+    title:'Win-Back Campaign for Lapsed Customers',
+    desc:'A 4-touch win-back sequence targeting customers who haven\'t purchased in 90+ days.',
+    tags:['Retention','Win-Back'],
+    flow:[
+      {t:'Trigger: No Purchase in 90 Days',d:'Segment: Last order date > 90 days AND at least 1 prior order'},
+      {t:'Email 1: Soft Check-in',d:'"We haven\'t seen you in a while…" — no offer yet'},
+      {t:'Email 2 (Day 5): Highlight New',d:'"Here\'s what\'s new since your last order" — product showcase'},
+      {t:'Email 3 (Day 10): Offer',d:'"Come back — here\'s 15% off your next order."'},
+      {t:'Email 4 (Day 20): Last Chance',d:'"Offer expires in 48 hrs." with countdown timer'},
+      {t:'Suppress if No Response',d:'Move to low-frequency list to protect deliverability'},
+    ]},
+  { id:27, cat:'ecommerce', platform:'Shopify', icon:'🎁', diff:'easy', steps:3, saves:196,
+    title:'Loyalty Points Milestone Email',
+    desc:'Automatically notify customers when they hit a loyalty point milestone and how to redeem.',
+    tags:['Loyalty','Retention'],
+    flow:[
+      {t:'Trigger: Points Milestone Reached',d:'Custom event when loyalty_points crosses 500, 1000, 2000'},
+      {t:'Send Congratulations Email',d:'"You hit [X] points! Here\'s how to redeem them."'},
+      {t:'Add Bonus Points',d:'Optionally award 50 bonus points as a surprise — triggers delight'},
+    ]},
+
+  // ── IT & INTERNAL OPS ──
+  { id:28, cat:'it', platform:'ServiceNow', icon:'🔑', diff:'medium', steps:5, saves:89,
+    title:'Access Request Auto-Provisioning',
+    desc:'When an access request is approved in ServiceNow, automatically provision accounts across systems.',
+    tags:['Access Management','Provisioning'],
+    flow:[
+      {t:'Trigger: Request Approved',d:'Access Request ticket status → Approved'},
+      {t:'Parse Request Details',d:'Extract: user, systems requested, access level from ticket fields'},
+      {t:'Provision via SCIM/API',d:'Auto-create accounts in: GSuite, Okta, Jira, Slack, GitHub'},
+      {t:'Send Credentials Email',d:'Email user with login instructions and security policy'},
+      {t:'Audit Log Entry',d:'Write provisioning event to compliance audit log'},
+    ]},
+  { id:29, cat:'it', platform:'Jira Service Mgmt', icon:'🔒', diff:'easy', steps:3, saves:167,
+    title:'Password Reset Self-Service Bot',
+    desc:'Let employees reset their own passwords via a chatbot without opening an IT ticket.',
+    tags:['Self-Service','Help Desk'],
+    flow:[
+      {t:'Trigger: Password Reset Request',d:'Employee types "password reset" in Slack/Teams bot'},
+      {t:'Identity Verification',d:'Send 2FA code to employee\'s registered mobile or email'},
+      {t:'Trigger Reset + Confirm',d:'On verification → trigger password reset in IdP (Okta/Azure AD) and confirm to user'},
+    ]},
+  { id:30, cat:'it', platform:'ServiceNow', icon:'🚨', diff:'hard', steps:6, saves:72,
+    title:'Security Incident Response Workflow',
+    desc:'Auto-triage security alerts, isolate affected systems, and notify the CISO in under 5 minutes.',
+    tags:['Security','Incident Response'],
+    flow:[
+      {t:'Trigger: SIEM Alert',d:'High-severity security alert fires from Splunk/Sentinel'},
+      {t:'Auto-Classify Severity',d:'Parse alert: Critical / High / Medium based on CVE score and blast radius'},
+      {t:'Isolate if Critical',d:'Critical → auto-quarantine affected endpoint via EDR API'},
+      {t:'Create P1 Incident',d:'Auto-create P1 incident ticket in ServiceNow with all context'},
+      {t:'Page On-Call',d:'PagerDuty page to security on-call engineer'},
+      {t:'Notify CISO',d:'If critical → auto-email CISO with incident summary and actions taken'},
+    ]},
+
+  // ── KNOWLEDGE MANAGEMENT ──
+  { id:31, cat:'knowledge', platform:'Notion', icon:'📝', diff:'easy', steps:4, saves:213,
+    title:'Meeting → Action Items in Notion (AI)',
+    desc:'Automatically extract meeting notes, generate a summary, and create action items in your Notion workspace.',
+    tags:['Meeting Ops','AI Summarisation'],
+    flow:[
+      {t:'Trigger: Meeting Transcript Ready',d:'Webhook from Otter.ai, Fireflies, or Zoom AI when recording processed'},
+      {t:'AI Summary Generation',d:'Send transcript to LLM → extract: summary, decisions, action items, owners'},
+      {t:'Create Notion Page',d:'Auto-create page in "Meeting Notes" DB with structured output'},
+      {t:'Assign Action Items',d:'Create tasks in Notion or Asana for each action item with owner + due date'},
+    ]},
+  { id:32, cat:'knowledge', platform:'Confluence', icon:'📚', diff:'medium', steps:4, saves:98,
+    title:'SOP Auto-Generation from Process Steps',
+    desc:'Turn a bullet-point process description into a formatted, versioned SOP page in Confluence.',
+    tags:['Documentation','SOPs','AI'],
+    flow:[
+      {t:'Trigger: Form Submission',d:'Team member submits process steps via Google Form or Typeform'},
+      {t:'AI Formatting',d:'LLM reformats into SOP structure: Purpose, Scope, Steps, Owner, Review Date'},
+      {t:'Create Confluence Page',d:'Auto-publish to correct Confluence space with correct template'},
+      {t:'Notify Team',d:'Post to Slack: "New SOP published: [Title] — review and comment by [Date]"'},
+    ]},
+  { id:33, cat:'knowledge', platform:'Google Workspace', icon:'📅', diff:'easy', steps:3, saves:178,
+    title:'Automated Weekly Team Digest',
+    desc:'Every Monday, auto-compile a digest of last week\'s updates and send to the whole team.',
+    tags:['Team Comms','Reporting'],
+    flow:[
+      {t:'Trigger: Monday 8:00 AM',d:'Scheduled weekly trigger'},
+      {t:'Collect Updates',d:'Pull: new Notion pages, closed Jira tickets, Slack highlights from last 7 days'},
+      {t:'Send Digest Email',d:'Formatted digest to team distribution list via Gmail'},
+    ]},
+
+  // ── DATA & ANALYTICS ──
+  { id:34, cat:'data', platform:'Snowflake', icon:'❄️', diff:'hard', steps:5, saves:63,
+    title:'Automated KPI Alert Pipeline',
+    desc:'Monitor key business metrics in Snowflake and alert the right team when thresholds are breached.',
+    tags:['KPI Monitoring','Alerting'],
+    flow:[
+      {t:'Trigger: Scheduled Query (every 1h)',d:'Snowflake task runs metric queries on production tables'},
+      {t:'Compare vs Thresholds',d:'Compare current values vs. configured alert thresholds per KPI'},
+      {t:'Route by Severity',d:'Breach > 10% → warning. Breach > 25% → critical.'},
+      {t:'Send Slack + Email Alert',d:'"🚨 [Metric] is at [Value] — [X]% below target." with Looker link'},
+      {t:'Log to Alert History Table',d:'Append to alerts log for trend analysis and false-positive tuning'},
+    ]},
+  { id:35, cat:'data', platform:'Power BI', icon:'📊', diff:'medium', steps:4, saves:114,
+    title:'Automated Executive Report Distribution',
+    desc:'Every Monday before the standup, generate and email executive dashboards as PDF snapshots.',
+    tags:['Reporting','Executive Comms'],
+    flow:[
+      {t:'Trigger: Monday 7:00 AM',d:'Power Automate scheduled flow'},
+      {t:'Refresh Dataset',d:'Trigger Power BI dataset refresh via API'},
+      {t:'Export Dashboard as PDF',d:'Export specified report pages as PDF via Power BI REST API'},
+      {t:'Email to Distribution List',d:'Send PDF with subject: "Weekly KPI Report — Week of [Date]"'},
+    ]},
+
+  // ── AUTOMATION PLATFORMS ──
+  { id:36, cat:'automation', platform:'n8n', icon:'🔗', diff:'medium', steps:5, saves:189,
+    title:'CRM ↔ Support Ticket Bi-Directional Sync',
+    desc:'Keep HubSpot contacts and Zendesk tickets in sync in real-time without manual copying.',
+    tags:['Data Sync','CRM','Integration'],
+    flow:[
+      {t:'Trigger: HubSpot Contact Updated',d:'HubSpot webhook fires on contact property change'},
+      {t:'Find Matching Zendesk User',d:'Search Zendesk by email address for matching user'},
+      {t:'Update Zendesk User',d:'Sync changed fields (name, company, phone) to Zendesk user record'},
+      {t:'Reverse: Zendesk Ticket Created',d:'Zendesk webhook → find HubSpot contact by email'},
+      {t:'Log Activity in HubSpot',d:'Create "Support Ticket Opened" activity on contact timeline'},
+    ]},
+  { id:37, cat:'automation', platform:'Make', icon:'🤝', diff:'medium', steps:4, saves:143,
+    title:'AI-Powered Lead Enrichment Pipeline',
+    desc:'Enrich new form leads with company data, LinkedIn profile, and an AI-written personalised opener.',
+    tags:['Lead Enrichment','AI','Sales'],
+    flow:[
+      {t:'Trigger: New Form Lead',d:'Watch for new rows in Google Sheets or HubSpot form submission'},
+      {t:'Enrich via Clearbit/Apollo',d:'Pull company size, industry, tech stack, LinkedIn URL'},
+      {t:'Generate AI Opener',d:'Send enriched data to GPT-4: "Write a 2-sentence personalised cold opener for this prospect"'},
+      {t:'Update CRM',d:'Write enriched data + AI opener back to HubSpot/Salesforce contact'},
+    ]},
+  { id:38, cat:'automation', platform:'Zapier', icon:'⚡', diff:'easy', steps:3, saves:298,
+    title:'Slack Standup to Notion Task Tracker',
+    desc:'Capture daily standups posted in Slack and automatically log blockers as tasks in Notion.',
+    tags:['Standup','Team Ops','Productivity'],
+    flow:[
+      {t:'Trigger: Standup Posted in #standup',d:'New message in designated Slack channel'},
+      {t:'Parse Blockers',d:'AI step: extract blockers/impediments from the standup message'},
+      {t:'Create Notion Tasks',d:'Create a task per blocker in Notion "Blockers" database with owner and date'},
+    ]},
+  { id:39, cat:'automation', platform:'Power Automate', icon:'🏢', diff:'medium', steps:5, saves:156,
+    title:'SharePoint Document Approval Flow',
+    desc:'Automate the multi-step approval process for documents uploaded to SharePoint.',
+    tags:['Approvals','SharePoint','Compliance'],
+    flow:[
+      {t:'Trigger: File Uploaded to SharePoint',d:'New file created in /Pending-Approval folder'},
+      {t:'Notify Primary Approver',d:'Teams message + email with document link and approve/reject buttons'},
+      {t:'Approved → Move and Notify',d:'Move to /Approved folder, notify uploader, update metadata'},
+      {t:'Rejected → Return with Comments',d:'Move to /Rejected, email uploader with reviewer comments'},
+      {t:'Timeout Escalation',d:'No action in 48h → escalate to department head'},
+    ]},
+
+  // ── AI PLATFORMS ──
+  { id:40, cat:'ai', platform:'OpenAI + HubSpot', icon:'🤖', diff:'hard', steps:6, saves:334,
+    title:'AI SDR Outbound Sequence',
+    desc:'A fully automated AI sales development rep that researches, personalises, and sends outbound emails at scale.',
+    tags:['AI SDR','Outbound Sales','AI'],
+    flow:[
+      {t:'Trigger: New Lead Added to Sequence',d:'Lead enrolled in outbound sequence list in HubSpot'},
+      {t:'AI Research Phase',d:'Scrape LinkedIn + company website → extract role, recent news, pain points'},
+      {t:'Generate Personalised Email',d:'GPT-4 writes email: hook based on research + relevant offer'},
+      {t:'Human Review Gate (Optional)',d:'Optionally queue for rep approval before send — or auto-send'},
+      {t:'Send via HubSpot Sequences',d:'Email delivered from rep\'s inbox with tracking enabled'},
+      {t:'AI Follow-up if No Reply',d:'Day 3 and Day 7: AI generates follow-up variants, auto-sends'},
+    ]},
+  { id:41, cat:'ai', platform:'Vapi / Retell AI', icon:'📞', diff:'hard', steps:5, saves:218,
+    title:'AI Voice Agent: Appointment Setter',
+    desc:'Deploy an AI voice agent that calls leads, qualifies them, and books meetings directly into your calendar.',
+    tags:['Voice AI','Lead Qualification','Appointments'],
+    flow:[
+      {t:'Trigger: New Lead Enters CRM',d:'Lead score > 30 OR manual enrollment into outbound campaign'},
+      {t:'AI Outbound Call',d:'Vapi/Retell places call using custom voice + trained script'},
+      {t:'Qualification Conversation',d:'AI asks qualifying questions: budget, timeline, decision-maker?'},
+      {t:'Book if Qualified',d:'Qualified → AI reads calendar availability and books meeting via Calendly API'},
+      {t:'Outcome Logged to CRM',d:'Call outcome, transcript, and qualification score written back to contact'},
+    ]},
+  { id:42, cat:'ai', platform:'Anthropic / LangChain', icon:'📋', diff:'hard', steps:5, saves:187,
+    title:'AI Proposal Generator',
+    desc:'Feed a sales call transcript and company context, get a client-ready proposal draft in minutes.',
+    tags:['AI Proposals','Sales','Document Gen'],
+    flow:[
+      {t:'Input: Call Transcript + CRM Data',d:'Sales rep uploads recording or pastes transcript + pulls CRM deal data'},
+      {t:'AI Extraction',d:'Claude extracts: pain points, requirements, budget signals, timeline from transcript'},
+      {t:'Proposal Drafting',d:'LLM generates: Executive Summary, Proposed Solution, Pricing, Timeline'},
+      {t:'Populate Template',d:'Insert into branded Notion or Google Doc template with company logo'},
+      {t:'Review + Send',d:'Send to rep for final review → one-click export to PDF'},
+    ]},
+  { id:43, cat:'ai', platform:'n8n + OpenAI', icon:'🔍', diff:'hard', steps:5, saves:142,
+    title:'AI Research Agent: Company Intel',
+    desc:'Automatically research a prospect company and compile a brief before a sales call.',
+    tags:['AI Research','Sales Prep','Intelligence'],
+    flow:[
+      {t:'Trigger: Meeting Booked',d:'Calendly webhook fires when a new sales meeting is confirmed'},
+      {t:'Extract Company from Email',d:'Parse attendee email domain → company name and website'},
+      {t:'AI Web Research',d:'Agent browses: homepage, about, news, LinkedIn, Crunchbase for key intel'},
+      {t:'Generate Brief',d:'GPT-4 writes structured brief: company overview, recent news, likely pain points, talking points'},
+      {t:'Deliver to Rep',d:'Email brief to rep + create note on HubSpot deal 30 min before meeting'},
+    ]},
+  { id:44, cat:'ai', platform:'Flowise / LangChain', icon:'💡', diff:'medium', steps:4, saves:198,
+    title:'Internal AI Knowledge Bot',
+    desc:'Connect your company Notion, Confluence, and Google Drive to a private AI assistant your team can query.',
+    tags:['AI Assistant','Knowledge Base','RAG'],
+    flow:[
+      {t:'Ingest: Document Sources',d:'Sync Notion DB + Confluence space + Google Drive folder to vector store'},
+      {t:'Embedding Pipeline',d:'Chunk documents, embed via OpenAI/Cohere, store in Pinecone/pgvector'},
+      {t:'Retrieval-Augmented Chat',d:'User asks question → retrieve top-K chunks → LLM generates answer with citations'},
+      {t:'Slack / Teams Integration',d:'Deploy as Slack bot: @ask-company-kb "What is our refund policy?"'},
+    ]},
+  { id:45, cat:'ai', platform:'Anthropic Claude', icon:'📑', diff:'medium', steps:4, saves:163,
+    title:'AI Document Extraction Pipeline',
+    desc:'Automatically extract structured data from PDFs, invoices, and contracts using AI.',
+    tags:['Document AI','Data Extraction','OCR'],
+    flow:[
+      {t:'Trigger: Document Uploaded',d:'File upload to S3/Google Drive/email attachment captured'},
+      {t:'AI Document Analysis',d:'Claude reads PDF: extracts key fields (amounts, dates, parties, clauses)'},
+      {t:'Structure + Validate',d:'JSON output validated against expected schema. Flag anomalies.'},
+      {t:'Push to Destination',d:'Write structured data to Airtable, Google Sheets, or ERP system'},
+    ]},
+];
+
+// State
+let activeCat = 'all';
+let activeDiff = 'all';
+let searchQuery = '';
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const filtered = FLOWS.filter(f => {
+    const catMatch = activeCat === 'all' || f.cat === activeCat;
+    const diffMatch = activeDiff === 'all' || f.diff === activeDiff;
+    const q = searchQuery.toLowerCase();
+    const textMatch = !q || f.title.toLowerCase().includes(q) || f.desc.toLowerCase().includes(q) || f.platform.toLowerCase().includes(q) || f.tags.join(' ').toLowerCase().includes(q);
+    return catMatch && diffMatch && textMatch;
+  });
+
+  document.getElementById('showing').textContent = filtered.length;
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty"><div class="empty-title">No flows found</div><div>Try adjusting your filters or search query.</div></div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map((f, i) => {
+    const dc = f.diff === 'easy' ? 'd-easy' : f.diff === 'medium' ? 'd-medium' : 'd-hard';
+    const dl = f.diff === 'easy' ? 'Beginner' : f.diff === 'medium' ? 'Intermediate' : 'Advanced';
+    const tags = f.tags.map(t => `<span class="tag">${t}</span>`).join('');
+    return `
+    <div class="card" data-cat="${f.cat}" style="animation-delay:${i*30}ms">
+      <div class="card-top">
+        <div class="card-icon-wrap">${f.icon}</div>
+        <div class="card-badges">
+          <span class="diff-badge ${dc}">${dl}</span>
+          <span class="steps-count">${f.steps} steps</span>
+        </div>
+      </div>
+      <div class="card-platform">${f.platform}</div>
+      <div class="card-title">${f.title}</div>
+      <div class="card-desc">${f.desc}</div>
+      <div class="card-tags">${tags}</div>
+      <div class="card-footer">
+        <button class="view-btn" onclick="openModal(${f.id})">View Flow →</button>
+        <span class="card-saves">♥ ${f.saves}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterCat(btn, cat) {
+  document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeCat = cat;
+  const labels = {all:'All Workflows',crm:'CRM & RevOps',marketing:'Marketing Automation',support:'Customer Support',erp:'ERP & Operations',hr:'HR & Recruiting',pm:'Project Management',ecommerce:'E-commerce',it:'IT & Internal Ops',knowledge:'Knowledge Management',data:'Data & Analytics',automation:'Automation Platforms',ai:'AI Platforms'};
+  document.getElementById('section-label').textContent = labels[cat] || 'Workflows';
+  renderGrid();
+}
+
+function filterDiff(btn, diff) {
+  document.querySelectorAll('.diff-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeDiff = diff;
+  renderGrid();
+}
+
+function doSearch(val) {
+  searchQuery = val;
+  renderGrid();
+}
+
+function openModal(id) {
+  const f = FLOWS.find(w => w.id === id);
+  if (!f) return;
+  const dc = f.diff === 'easy' ? 'd-easy' : f.diff === 'medium' ? 'd-medium' : 'd-hard';
+  const dl = f.diff === 'easy' ? 'Beginner' : f.diff === 'medium' ? 'Intermediate' : 'Advanced';
+  const stepsHtml = f.flow.map((s,i) => `
+    <div class="flow-line">
+      <div class="step-circle">${String(i+1).padStart(2,'0')}</div>
+      <div class="step-content">
+        <div class="step-title">${s.t}</div>
+        <div class="step-body">${s.d}</div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div style="font-size:36px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
+      ${f.icon}
+      <span class="diff-badge ${dc}" style="font-size:11px">${dl}</span>
+    </div>
+    <div class="modal-platform">${f.platform} · ${f.steps} steps</div>
+    <div class="modal-title">${f.title}</div>
+    <div class="modal-desc">${f.desc}</div>
+    <div>${stepsHtml}</div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" onclick="copySpec(${f.id})">📋 Copy Spec</button>
+      <button class="modal-btn-sec" onclick="closeModal()">Close</button>
+    </div>`;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function copySpec(id) {
+  const f = FLOWS.find(w => w.id === id);
+  const text = `WORKFLOW: ${f.title}\nPlatform: ${f.platform}\nDifficulty: ${f.diff}\n\n${f.desc}\n\nSTEPS:\n${f.flow.map((s,i)=>`${i+1}. ${s.t}\n   ${s.d}`).join('\n\n')}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.modal-btn-primary');
+    btn.textContent = '✅ Copied to clipboard!';
+    setTimeout(() => btn.textContent = '📋 Copy Spec', 2200);
+  });
+}
+
+function openSubmit() {
+  alert('Submissions opening soon!\n\nDrop your email at the newsletter link below and we\'ll notify you when the community contribution portal launches.');
+}
+
+// Init
+renderGrid();
+</script>
+</body>
+</html>
